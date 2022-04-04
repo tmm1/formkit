@@ -129,16 +129,15 @@ describe('value propagation', () => {
     ).toStrictEqual([true, false, true])
   })
 
-  it('can set the state of checkboxes from a v-model using vue reactive object', async () => {
+  it('can set the state of text input from a v-model using vue reactive object', async () => {
     const wrapper = mount(
       {
         setup() {
-          const options = ['a', 'b', 'c']
           const values = reactive<{ form: Record<string, any> }>({ form: {} })
           const changeValues = () => {
             values.form.foo = 'bar bar'
           }
-          return { options, values, changeValues }
+          return { values, changeValues }
         },
         template: `<FormKit type="form" v-model="values.form">
         <FormKit type="text" name="foo" />
