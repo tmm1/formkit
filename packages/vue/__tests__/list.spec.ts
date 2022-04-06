@@ -1,4 +1,5 @@
 import { getNode, reset } from '@formkit/core'
+import { token } from '@formkit/utils'
 import defaultConfig from '../src/defaultConfig'
 import { plugin } from '../src/plugin'
 import { mount } from '@vue/test-utils'
@@ -146,6 +147,38 @@ describe('numeric lists', () => {
     wrapper.vm.showB = true
     await new Promise((r) => setTimeout(r, 25))
     expect(wrapper.vm.values).toStrictEqual(['A', 'B', 'C'])
+  })
+
+  it('can spawn a node that absorbs the value at a given index', async () => {
+    const id = token()
+    const hij = token()
+    const wrapper = mount(
+      {
+        data() {
+          return {
+            def: false,
+            values: [] as string[],
+          }
+        },
+        template: `<FormKit type="list" v-model="values" id="${id}">
+        <FormKit value="ABC" />
+        <FormKit value="HIJ" id="${hij}" />
+      </FormKit>`,
+      },
+      {
+        global: {
+          plugins: [[plugin, defaultConfig]],
+        },
+      }
+    )
+    expect(wrapper.vm.values).toStrictEqual(['ABC', 'HIJ'])
+    wrapper.vm.values.splice(1, 0, 'DEF')
+    await nextTick()
+    expect(wrapper.vm.values).toStrictEqual(['ABC', 'DEF', 'HIJ'])
+    const node = getNode(hij)!
+    expect(node.value).toBe('HIJ')
+    node.input('XYZ', false)
+    expect(wrapper.vm.values).toStrictEqual(['ABC', 'XYZ', 'HIJ'])
   })
 
   // it.only('can render a list of inputs each with an index number', async () => {
