@@ -240,6 +240,7 @@ export function sugar<T extends FormKitSchemaNode>(
       for: iterator,
       if: condition,
       children,
+      id,
       key,
       bind,
       ...props
@@ -252,8 +253,9 @@ export function sugar<T extends FormKitSchemaNode>(
       condition ? { if: condition } : {},
       iterator ? { for: iterator } : {},
       children ? { children } : {},
-      key ? { props: { key } } : {},
-      bind ? { bind } : {}
+      key ? { props: { key: key || id } } : {},
+      bind ? { bind } : {},
+      id ? { id } : {}
     )
   }
   return node
